@@ -1,0 +1,34 @@
+version: "3"
+services:
+  postgres:
+    container_name: postgres1
+    build:
+      context: postgres
+      dockerfile: ./Dockerfile
+    image: "simplon/postgres:0.0.1"
+    restart: always
+    environment:
+      env_file: .env
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - "0.0.0.0:5454:5432"
+    networks:
+      - simplon-net
+  node-api:
+    container_name: "node-api"
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - simplon-net   
+networks:
+  simplon-net:
