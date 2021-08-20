@@ -1,13 +1,21 @@
-FROM node:14
+FROM node:15
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm install && npm install pg -g && npm install nodemon -g
+
+RUN apt-get update && \
+      apt-get -y install sudo
+
+RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
+
+USER docker
 
 COPY . .
 
 EXPOSE 8080
 
-CMD [ "node", "index.js" ]
+
+CMD [ "npm", "start" ]

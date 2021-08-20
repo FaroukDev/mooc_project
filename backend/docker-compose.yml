@@ -8,10 +8,13 @@ services:
     image: "simplon/postgres:0.0.1"
     restart: always
     environment:
-      env_file: .env
+      POSTGRES_DB: simplon
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 2zerezGZEGZ55??
       PGDATA: /var/lib/postgresql/data
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/db.sql
+      # - ./postgres/db/init.sh:/docker-entrypoint-initdb.d/init1.sh
     ports:
       - "0.0.0.0:5454:5432"
     networks:
@@ -22,10 +25,11 @@ services:
       context: ./api
       dockerfile: Dockerfile
     volumes:
-      - .:/app
-      - /app/node_modules
+      - ./api:/app
+    command: npm start
+    restart: always
     ports:
-      - "8080:8080"
+      - "0.0.0.0:8080:8080"
     depends_on:
       - postgres
     networks:
